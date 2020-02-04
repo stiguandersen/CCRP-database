@@ -7,9 +7,23 @@
 //// -- Tables and References
 
 // Creating tables
+
+Table collection_site as CS {
+  CSID int [pk, increment] // auto-increment
+  collection_date date
+  latitude float
+  longitude float
+  elevation integer
+  country varchar
+  vegetation_type varchar
+  forest_status varchar
+  canopy_cover varchar
+}
+
+
 Table plant_germplasm as PG {
   PGID int [pk, increment] // auto-increment
-  description varchar
+  CSID int
 }
 
 Table seed_lot as SL {
@@ -19,14 +33,17 @@ Table seed_lot as SL {
 
 Table strain_germplasm as SG {
   SGID int [pk, increment] // auto-increment
+  CSID int
 }
 
 Table syncom as SC {
   SCID int [pk, increment] // auto-increment
+  list_of_SGIDs varchar
 }
 
 Table microbial_community as MC {
   MCID int [pk, increment] // auto-increment
+  CSID int
 }
 
 Table study as ST {
@@ -144,7 +161,9 @@ Ref: SG.SGID < GE.SGID
 Ref: SC.SCID < GE.SCID
 Ref: MC.MCID < GE.MCID
 Ref: SA.SAID < TR.SAID
-
+Ref: CS.CSID < PG.CSID
+Ref: CS.CSID < SG.CSID
+Ref: CS.CSID < MC.CSID
 
 
 

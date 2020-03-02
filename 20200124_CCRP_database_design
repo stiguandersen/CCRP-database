@@ -8,8 +8,16 @@
 
 // Creating tables
 
+Table study as ST {
+  STID int [pk, increment]
+  study_name varchar
+  project varchar //InRoot, MATRIX, INTERACT
+  responsible_PI varchar
+  description varchar
+}
+
 Table collection_site as CS {
-  CSID int [pk, increment] // auto-increment
+  CSID int [pk, increment]
   collection_date date
   latitude float
   longitude float
@@ -18,117 +26,189 @@ Table collection_site as CS {
   vegetation_type varchar
   forest_status varchar
   canopy_cover varchar
-}
-
+  source_mat_id
+  host_scientific_name
+  host_common_name
+  host_type
+  plot_number
+  host_body_site varchar
+  collected_by varchar
+  management_history varchar
+  Description varchar
+  }
 
 Table plant_germplasm as PG {
-  PGID int [pk, increment] // auto-increment
+  PGID int [pk, increment]
   CSID int
+  line_name varchar
+  genotype varchar
 }
 
 Table seed_lot as SL {
-  SLID int [pk, increment] // auto-increment
+  SLID int [pk, increment]
   PGID int
+  harvest_date date
+  harvest_location varchar
+  storage_location varchar
+  aarhus_seedbag_ID integer
 }
 
 Table strain_germplasm as SG {
-  SGID int [pk, increment] // auto-increment
+  SGID int [pk, increment]
   CSID int
+  growth_medium text
+  growth_temperature text
+  antibiotic_resistance text
+  genetic_modification text
+  Genus text
+  Species text
+  Strain text
+  Additional name text
+  Genotype text
+  CeMiSt_Plasmid_ID text
+  Plasmid text
+  ABM text
+  isolated_from text
+  isolated_by text
+  date date
+  project_code varchar
+  collection_number int
+  created_by text
+  storage_location varchar //Builing, Room, Freezer, Shelf
+  storage_temperature int
+  responsible_PI text
+  Notes text
 }
 
 Table syncom as SC {
-  SCID int [pk, increment] // auto-increment
+  SCID int [pk, increment]
   list_of_SGIDs varchar
+  OD600_of_SGIDs varchar
+  responsible_PI varchar
+  storage_location varchar
 }
 
 Table microbial_community as MC {
-  MCID int [pk, increment] // auto-increment
+  MCID int [pk, increment]
   CSID int
+  description text
 }
 
-Table study as ST {
-  STID int [pk, increment] // auto-increment
-}
 
 Table sample as SA {
-  SAID int [pk, increment] // auto-increment
+  SAID int [pk, increment]
   STID int
   SLID int
   SGID int
   SCID int
   MCID int
-  EPID int
+  FPID int
+  EPID int //list of EPIDs
+  OSID int
+  plant_tissue varchar
+  Compartment varchar
+  start_date_time date
+  end_date_time date
 }
 
 Table seq_experiment as SE {
-  SEID int [pk, increment] // auto-increment
+  SEID int [pk, increment]
   SAID int
   SRID int
+  raw_data_file text
+  processed_data_file text
+  SRA_ID varchar //once assigned by SRA 
 }
 
 Table seq_run as SR {
-  SRID int [pk, increment] // auto-increment
+  SRID int [pk, increment]
   SEID int
+  technology text
+  read_length float
+  pairing text
+  chemistry text
+  machine text
+  run_date date
+  service_provider text
+  responsible_PI text
 }
 
 Table experimental_protocol as EP {
-  EPID int [pk, increment] // auto-increment
+  EPID int [pk, increment]
+  step-by-step_protocol varchar //link to pdf
+  protocol_type varchar //setup, growth conditions, harvesting, DNA extraction, library prep 
+  description varchar
+  created_by varchar
+  date_entered date
+  responsible_pi varchar
 }
 
 
-Table genotype as GE {
-  GEID int [pk, increment] // auto-increment
-  GDID int
-  SAID int
-  PGID int
-  SGID int
-  SCID int
-  MCID int
-}
-
-Table genotype_description as GD {
-  GDID int [pk, increment] // auto-increment
-}
-
-Table transcriptome as TR {
-  TRID int [pk, increment] // auto-increment
-  SAID int
-  TDID int
-  }
-
-Table transcriptome_description as TD {
-  TDID int [pk, increment] // auto-increment
-  }
 
 Table field_trail as FT {
-  FTID int [pk, increment] // auto-increment
+  FTID int [pk, increment]
   STID int
-  }
+  latitude float
+  longitude float
+  plot_size varchar
+  soiltype varchar
+  start_of_trial date
+  end_of_trial date
+  description varchar
+  trial_manager varchar
+  comments varchar
+ }
 
 Table field_plot as FP {
-  FPID int [pk, increment] // auto-increment
+  FPID int [pk, increment]
   FTID int
   SLID int
-  }
+  latitude float
+  longitude float
+  description
+  comments
+ }
 
 Table field_climate as FC {
-  FCID int [pk, increment] // auto-increment
+  FCID int [pk, increment]
   FTID int
+  date_registrered date
+  degrees_celcius float
+  humidity_percent float
+  precipication_mm float
+  sunlight_hours float
+  drought_index float
+  comments text
   }
 
 Table field_management as FM {
-  FMID int [pk, increment] // auto-increment
+  FMID int [pk, increment]
   FTID int
+  treatment text
+  composition varchar
+  concentration varchar
+  dosage varchar
+  date date
+  comments text
   }
 
 Table phenotype as PH {
-  PHID int [pk, increment] // auto-increment
+  PHID int [pk, increment]
   PDID int
+  FPID int
   SAID int
+  date_registrered date
+  phenotype_value float
+  phenotype_file text
+  entered_by text
+  comments text
   }
 
 Table phenotype_description as PD {
-  PDID int [pk, increment] // auto-increment
+  PDID int [pk, increment]
+  EPID int
+  phenotype_description text
+  comments text
   }
 
 
@@ -146,8 +226,6 @@ Ref: EP.EPID < SA.EPID
 Ref: SE.SAID > SA.SAID
 Ref: SE.SEID < SR.SEID
 Ref: SR.SRID < SE.SRID
-Ref: GD.GDID < GE.GDID
-Ref: TD.TDID < TR.TDID
 Ref: ST.STID < FT.STID
 Ref: SL.SLID < FP.SLID
 Ref: FT.FTID < FP.FTID
@@ -155,17 +233,10 @@ Ref: FT.FTID < FC.FTID
 Ref: FT.FTID < FM.FTID
 Ref: SA.SAID < PH.SAID
 Ref: PD.PDID < PH.PDID
-Ref: SA.SAID < GE.SAID
-Ref: PG.PGID < GE.PGID
-Ref: SG.SGID < GE.SGID
-Ref: SC.SCID < GE.SCID
-Ref: MC.MCID < GE.MCID
-Ref: SA.SAID < TR.SAID
 Ref: CS.CSID < PG.CSID
 Ref: CS.CSID < SG.CSID
 Ref: CS.CSID < MC.CSID
-
-
+Ref: FP.FPID < SA.FPI
 
 
 //----------------------------------------------//

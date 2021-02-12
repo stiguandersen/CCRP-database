@@ -1,13 +1,7 @@
-/// Initial draft for CCRP database structure
-
-
-/// DBML markup
-
 //// -- LEVEL 1
 //// -- Tables and References
 
 // Creating tables
-
 Table study as ST {
   STID int [pk, increment]
   study_name varchar
@@ -15,6 +9,28 @@ Table study as ST {
   responsible_PI varchar
   description varchar
 }
+
+Table processed_data as PRD {
+  PRDID int [pk, increment]
+  description varchar
+  STID int
+  SCPID int //generated using this/these scripts
+  PRD_file_path varchar
+}
+
+
+Table scripts as SCP {
+  SCPID int [pk, increment]
+  description varchar
+  STID int
+  SEID_input int //Input sequencing data
+  PRD_input int //Input processed_data
+  PRD_output int //output processed_data
+  SCP_github_link varchar 
+}
+
+
+
 
 Table collection_site as CS {
   CSID int [pk, increment]
@@ -26,16 +42,17 @@ Table collection_site as CS {
   vegetation_type varchar
   forest_status varchar
   canopy_cover varchar
-  source_mat_id
-  host_scientific_name
-  host_common_name
-  host_type
-  plot_number
+  source_mat_id varchar
+  host_scientific_name varchar
+  host_common_name varchar
+  host_type varchar
+  plot_number varchar
   host_body_site varchar
   collected_by varchar
   management_history varchar
   Description varchar
   }
+
 
 Table plant_germplasm as PG {
   PGID int [pk, increment]
@@ -60,13 +77,13 @@ Table strain_germplasm as SG {
   growth_temperature text
   antibiotic_resistance text
   genetic_modification text
-  Genus text
-  Species text
-  Strain text
-  Additional name text
-  Genotype text
+  genus text
+  species text
+  strain text
+  additional_name text
+  genotype text
   CeMiSt_Plasmid_ID text
-  Plasmid text
+  plasmid text
   ABM text
   isolated_from text
   isolated_by text
@@ -77,7 +94,7 @@ Table strain_germplasm as SG {
   storage_location varchar //Builing, Room, Freezer, Shelf
   storage_temperature int
   responsible_PI text
-  Notes text
+  notes text
 }
 
 Table syncom as SC {
@@ -116,7 +133,6 @@ Table seq_experiment as SE {
   SAID int
   SRID int
   raw_data_file text
-  processed_data_file text
   SRA_ID varchar //once assigned by SRA 
 }
 
@@ -135,7 +151,7 @@ Table seq_run as SR {
 
 Table experimental_protocol as EP {
   EPID int [pk, increment]
-  step-by-step_protocol varchar //link to pdf
+  step_by_step_protocol varchar //link to pdf
   protocol_type varchar //setup, growth conditions, harvesting, DNA extraction, library prep 
   description varchar
   created_by varchar
@@ -157,7 +173,7 @@ Table field_trail as FT {
   description varchar
   trial_manager varchar
   comments varchar
- }
+  }
 
 Table field_plot as FP {
   FPID int [pk, increment]
@@ -165,9 +181,9 @@ Table field_plot as FP {
   SLID int
   latitude float
   longitude float
-  description
-  comments
- }
+  description text
+  comments  text
+  }
 
 Table field_climate as FC {
   FCID int [pk, increment]
@@ -213,6 +229,7 @@ Table phenotype_description as PD {
 
 
 
+
 // Creating references
 // You can also define relaionship separately
 // > many-to-one; < one-to-many; - one-to-one
@@ -236,8 +253,14 @@ Ref: PD.PDID < PH.PDID
 Ref: CS.CSID < PG.CSID
 Ref: CS.CSID < SG.CSID
 Ref: CS.CSID < MC.CSID
-Ref: FP.FPID < SA.FPI
-
+Ref: FP.FPID < SA.FPID
+Ref: FP.FPID < PH.FPID
+Ref: ST.STID < PRD.STID
+Ref: PRD.SCPID < SCP.SCPID
+Ref: ST.STID < SCP.STID
+Ref: SCP.PRD_input < PRD.PRDID
+Ref: SCP.PRD_output < PRD.PRDID
+Ref: SCP.SEID_input < SE.SEID
 
 //----------------------------------------------//
 
